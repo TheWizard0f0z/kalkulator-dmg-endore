@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator leczenia Endore Middle-Earth</title>
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background: url('https://endoreshard.wordpress.com/wp-content/uploads/2021/04/header1.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #f4e9c5;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 3rem;
+      color: #e0d69b;
+      text-shadow: 0 0 10px #000, 0 0 20px #6b4226;
+    }
+    #calculator {
+      background: rgba(0, 0, 0, 0.8);
+      border: 5px solid #c69c6d;
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 400px;
+      margin: 20px auto;
+      box-shadow: 0 0 15px #000, 0 0 25px #6b4226;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-size: 1.2rem;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid #c69c6d;
+      border-radius: 5px;
+      background-color: #f4e9c5;
+      color: #3e2723;
+      box-shadow: inset 0 0 5px #000;
+    }
+    select {
+      width: 96%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid #c69c6d;
+      border-radius: 5px;
+      background-color: #f4e9c5;
+      color: #3e2723;
+      box-shadow: inset 0 0 5px #000;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      color: #f4e9c5;
+      background-color: #6b4226;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 10px #000, 0 0 15px #6b4226;
+    }
+    button:hover {
+      background-color: #8b5e3c;
+      box-shadow: 0 0 20px #000, 0 0 25px #8b5e3c;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      color: #e0d69b;
+      text-shadow: 0 0 10px #000;
+    }
+    footer {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #e0d69b;
+    }
+    footer a {
+      color: #c69c6d;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kalkulator leczenia Endore Middle-Earth</h1>
+  <div id="calculator">
+  	<label for="minbasewapondmg">Minimalny bazowy dmg broni:</label>
+    <input type="number" id="minbasewapondmg" placeholder="Wpisz minimalny bazowy dmg broni" step="any">
+    
+    <label for="maxbasewapondmg">Maksymalny bazowy dmg broni:</label>
+    <input type="number" id="maxbasewapondmg" placeholder="Wpisz maksymalny bazowy dmg broni" step="any">
+    
+    <label for="weaponquality">Jakość broni:</label>
+	<select id="weaponquality">
+    	<option value="" disabled selected>Wybierz jakość broni</option>
+  		<option value="0.5">Low</option>
+  		<option value="1">Average</option>
+  		<option value="1.15">Good</option>
+  		<option value="1.23">Superior</option>
+  		<option value="1.3">Exp</option>
+	</select>
+    
+    <label for="materialquality">Rodzaj materiału:</label>
+    <input type="number" id="materialquality" placeholder="Wybierz rodzaj materiału" step="any">
+  
+    <label for="anatomy">Anatomia:</label>
+    <input type="number" id="anatomy" placeholder="Wpisz wartość anatomii" step="any">
+    
+    <label for="str">Siła:</label>
+    <input type="number" id="str" placeholder="Wpisz ilość siły" step="any">
+    
+    <label for="dex">Zręczność:</label>
+    <input type="number" id="dex" placeholder="Wpisz ilość zręczności" step="any">
+    
+    <label for="weaponfight">Walka bronią:</label>
+    <input type="number" id="weaponfight" placeholder="Wpisz wartość walki bronią" step="any">
+
+    <label for="strmod">Modyfikator siły:</label>
+    <select id="strmod">
+    	<option value="" disabled selected>Wybierz rodzaj broni</option>
+    	<option value="0.7">W zwarciu</option>
+  		<option value="0.3">Finezja</option>
+  		<option value="0.2">Dystansowe</option>
+    </select>
+    
+    <label for="dexmod">Modyfikator zręczności:</label>
+    <select id="dexmod">
+    	<option value="" disabled selected>Wybierz rodzaj broni</option>
+    	<option value="0.3">W zwarciu</option>
+  		<option value="0.7">Finezja</option>
+  		<option value="0.8">Dystansowe</option>
+    </select>
+
+    <button onclick="calculate()">Oblicz</button>
+
+    <div id="result"></div>
+  </div>
+  <footer>
+    Stworzone dla najodważniejszych poszukiwaczy przygód. 
+    <br> Inspiracja <a href="https://wiki.endore.pl" target="_blank">Endore Middle-Earth</a>.
+  </footer>
+  <script>
+    function calculate() {
+      // Pobierz wartości od użytkownika
+      const minbasewapondmg = parseFloat(document.getElementById('minbasewapondmg').value) || 0;
+      const maxbasewapondmg = parseFloat(document.getElementById('maxbasewapondmg').value) || 0;
+      const weaponquality = parseFloat(document.getElementById('weaponquality').value) || 0;
+      const materialquality = parseFloat(document.getElementById('materialquality').value) || 0;
+      const anatomy = parseFloat(document.getElementById('anatomy').value) || 0;
+      const str = parseFloat(document.getElementById('str').value) || 0;
+      const dex = parseFloat(document.getElementById('dex').value) || 0;
+      const weaponfight = parseFloat(document.getElementById('weaponfight').value) || 0;
+      const strmod = parseFloat(document.getElementById('strmod').value) || 0;
+      const dexmod = parseFloat(document.getElementById('dexmod').value) || 0;
+
+      // Obliczenia
+      const minbasedmg = minbasewapondmg
+      const midbasedmg = (minbasewapondmg + maxbasewapondmg) / 2
+      const maxbasedmg = maxbasewapondmg
+      const minbasehitdmg = minbasedmg * (weaponquality + materialquality) * 0.4 * 1.5
+      const midbasehitdmg = midbasedmg * (weaponquality + materialquality) * 0.4 * 1.5
+      const maxbasehitdmg = maxbasedmg * (weaponquality + materialquality) * 0.4 * 1.5
+      const modanatomy = (anatomy + 50) * 0.01
+      const statmod = (str * strmod + dex * dexmod) / 60
+      const hitdmgmultiplier = modanatomy + statmod
+      const weaponfightbonus = weaponfight / 20
+      const mindmg = Math.floor(minbasehitdmg * hitdmgmultiplier + weaponfightbonus)
+      const middmg = Math.floor(midbasehitdmg * hitdmgmultiplier + weaponfightbonus)
+      const maxdmg = Math.floor(maxbasehitdmg * hitdmgmultiplier + weaponfightbonus)
+
+      // Wyświetlenie wyników
+      document.getElementById('result').innerHTML = `
+        <p>Minimalny dmg: <strong>${mindmg}</strong></p>
+        <p>Średni dmg: <strong>${middmg}</strong></p>
+        <p>Maksymalny dmg: <strong>${maxdmg}</strong></p>
+      `;
+    }
+  </script>
+</body>
+</html>
