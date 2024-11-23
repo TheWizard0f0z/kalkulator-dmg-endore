@@ -122,13 +122,13 @@
   <div>
     <label for="weaponquality">Jakość broni:</label>
     <select id="weaponquality">
-      <option value="" disabled selected>Wybierz jakość broni</option>
-      <option value="0.5">Low</option>
-      <option value="1">Average</option>
-      <option value="1.15">Good</option>
-      <option value="1.23">Superior</option>
-      <option value="1.3">Exp</option>
-    </select>
+  	  <option value="" disabled selected>Wybierz jakość broni</option>
+      <option value="Low">Low</option>
+      <option value="Average">Average</option>
+      <option value="Good">Good</option>
+      <option value="Superior">Superior</option>
+      <option value="Exp">Exp</option>
+</select>
   </div>
   <div>
     <label for="materialquality">Rodzaj materiału:</label>
@@ -203,7 +203,7 @@
       // Pobierz wartości od użytkownika
       const minbasewapondmg = parseFloat(document.getElementById('minbasewapondmg').value) || 0;
       const maxbasewapondmg = parseFloat(document.getElementById('maxbasewapondmg').value) || 0;
-      const weaponquality = parseFloat(document.getElementById('weaponquality').value) || 0;
+      const weaponquality = document.getElementById('weaponquality').value; // Pobieramy jakość jako string
       const materialquality = parseFloat(document.getElementById('materialquality').value) || 0;
       const anatomy = parseFloat(document.getElementById('anatomy').value) || 0;
       const str = parseFloat(document.getElementById('str').value) || 0;
@@ -212,28 +212,62 @@
       const strmod = parseFloat(document.getElementById('strmod').value) || 0;
       const dexmod = parseFloat(document.getElementById('dexmod').value) || 0;
 
-      // Obliczenia
-      const minbasedmg = minbasewapondmg
-      const midbasedmg = (minbasewapondmg + maxbasewapondmg) / 2
-      const maxbasedmg = maxbasewapondmg
-      const minbasehitdmg = minbasedmg * (weaponquality + materialquality) * 0.4 * 1.5
-      const midbasehitdmg = midbasedmg * (weaponquality + materialquality) * 0.4 * 1.5
-      const maxbasehitdmg = maxbasedmg * (weaponquality + materialquality) * 0.4 * 1.5
-      const modanatomy = (anatomy + 50) * 0.01
-      const statmod = (str * strmod + dex * dexmod) / 60
-      const hitdmgmultiplier = modanatomy + statmod
-      const weaponfightbonus = weaponfight / 20
-      const mindmg = Math.floor(minbasehitdmg * hitdmgmultiplier + weaponfightbonus)
-      const middmg = Math.floor(midbasehitdmg * hitdmgmultiplier + weaponfightbonus)
-      const maxdmg = Math.floor(maxbasehitdmg * hitdmgmultiplier + weaponfightbonus)
+      // Przypisz wartości minimalne i maksymalne dla jakości broni
+      let weaponqualityMin = 0;
+      let weaponqualityMax = 0;
 
-      // Wyświetlenie wyników
-      document.getElementById('result').innerHTML = `
+      switch (weaponquality) {
+        case "Low":
+          weaponqualityMin = 0.5;
+          weaponqualityMax = 0.99;
+          break;
+        case "Average":
+          weaponqualityMin = 1;
+          weaponqualityMax = 1.14;
+          break;
+        case "Good":
+          weaponqualityMin = 1.15;
+          weaponqualityMax = 1.22;
+          break;
+        case "Superior":
+          weaponqualityMin = 1.23;
+          weaponqualityMax = 1.29;
+          break;
+        case "Exp":
+          weaponqualityMin = 1.3;
+          weaponqualityMax = 1.4;
+          break;
+        default:
+          weaponqualityMin = 0;
+          weaponqualityMax = 0;
+      }
+
+      // Obliczenia
+      const minbasedmg = minbasewapondmg;
+      const midbasedmg = (minbasewapondmg + maxbasewapondmg) / 2;
+      const maxbasedmg = maxbasewapondmg;
+
+      const minbasehitdmg = minbasedmg * (weaponqualityMin + materialquality) * 0.4 * 1.5;
+      const midbasehitdmg = midbasedmg * ((weaponqualityMin + weaponqualityMax) / 2 + materialquality) * 0.4 * 1.5;
+      const maxbasehitdmg = maxbasedmg * (weaponqualityMax + materialquality) * 0.4 * 1.5;
+
+     const modanatomy = (anatomy + 50) * 0.01;
+     const statmod = (str * strmod + dex * dexmod) / 60;
+     const hitdmgmultiplier = modanatomy + statmod;
+     const weaponfightbonus = weaponfight / 20;
+
+     const mindmg = Math.floor(minbasehitdmg * hitdmgmultiplier + weaponfightbonus);
+     const middmg = Math.floor(midbasehitdmg * hitdmgmultiplier + weaponfightbonus);
+     const maxdmg = Math.floor(maxbasehitdmg * hitdmgmultiplier + weaponfightbonus);
+
+     // Wyświetlenie wyników
+     document.getElementById('result').innerHTML = `
         <p>Minimalny dmg: <strong>${mindmg}</strong></p>
         <p>Średni dmg: <strong>${middmg}</strong></p>
         <p>Maksymalny dmg: <strong>${maxdmg}</strong></p>
-      `;
+     `;
     }
+
   </script>
 </body>
 </html>
