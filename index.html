@@ -174,23 +174,14 @@
     <input type="number" id="dex" placeholder="Wpisz ilość zręczności" step="any">
   </div>
   <div>
-    <label for="strmod">Modyfikator siły:</label>
-    <select id="strmod">
-      <option value="" disabled selected>Wybierz rodzaj broni</option>
-      <option value="0.7">W zwarciu</option>
-      <option value="0.3">Finezja</option>
-      <option value="0.2">Dystansowe</option>
+    <label for="weaponType">Rodzaj broni:</label>
+    <select id="weaponType" onchange="updateModifiers()">
+        <option value="" disabled selected>Wybierz rodzaj broni</option>
+        <option value="melee">W zwarciu</option>
+        <option value="finesse">Finezja</option>
+        <option value="ranged">Dystansowe</option>
     </select>
-  </div>
-  <div>
-    <label for="dexmod">Modyfikator zręczności:</label>
-    <select id="dexmod">
-      <option value="" disabled selected>Wybierz rodzaj broni</option>
-      <option value="0.3">W zwarciu</option>
-      <option value="0.7">Finezja</option>
-      <option value="0.8">Dystansowe</option>
-    </select>
-  </div>
+</div>
   <button onclick="calculate()">Oblicz</button>
   <div id="result"></div>
 </div>
@@ -199,76 +190,100 @@
     <br> Inspiracja <a href="https://wiki.endore.pl" target="_blank">Endore Middle-Earth</a>.
   </footer>
   <script>
-    function calculate() {
-      // Pobierz wartości od użytkownika
-      const minbasewapondmg = parseFloat(document.getElementById('minbasewapondmg').value) || 0;
-      const maxbasewapondmg = parseFloat(document.getElementById('maxbasewapondmg').value) || 0;
-      const weaponquality = document.getElementById('weaponquality').value; // Pobieramy jakość jako string
-      const materialquality = parseFloat(document.getElementById('materialquality').value) || 0;
-      const anatomy = parseFloat(document.getElementById('anatomy').value) || 0;
-      const str = parseFloat(document.getElementById('str').value) || 0;
-      const dex = parseFloat(document.getElementById('dex').value) || 0;
-      const weaponfight = parseFloat(document.getElementById('weaponfight').value) || 0;
-      const strmod = parseFloat(document.getElementById('strmod').value) || 0;
-      const dexmod = parseFloat(document.getElementById('dexmod').value) || 0;
+    // Funkcja updateModifiers - dynamicznie aktualizuje modyfikatory na podstawie wyboru broni
+    let strmod = 0; // Deklaracja globalna modyfikatora siły
+    let dexmod = 0; // Deklaracja globalna modyfikatora zręczności
 
-      // Przypisz wartości minimalne i maksymalne dla jakości broni
-      let weaponqualityMin = 0;
-      let weaponqualityMax = 0;
+    function updateModifiers() {
+        const weaponType = document.getElementById('weaponType').value;
 
-      switch (weaponquality) {
-        case "Low":
-          weaponqualityMin = 0.5;
-          weaponqualityMax = 0.99;
-          break;
-        case "Average":
-          weaponqualityMin = 1;
-          weaponqualityMax = 1.14;
-          break;
-        case "Good":
-          weaponqualityMin = 1.15;
-          weaponqualityMax = 1.22;
-          break;
-        case "Superior":
-          weaponqualityMin = 1.23;
-          weaponqualityMax = 1.29;
-          break;
-        case "Exp":
-          weaponqualityMin = 1.3;
-          weaponqualityMax = 1.4;
-          break;
-        default:
-          weaponqualityMin = 0;
-          weaponqualityMax = 0;
-      }
-
-      // Obliczenia
-      const minbasedmg = minbasewapondmg;
-      const midbasedmg = (minbasewapondmg + maxbasewapondmg) / 2;
-      const maxbasedmg = maxbasewapondmg;
-
-      const minbasehitdmg = minbasedmg * (weaponqualityMin + materialquality) * 0.4 * 1.5;
-      const midbasehitdmg = midbasedmg * ((weaponqualityMin + weaponqualityMax) / 2 + materialquality) * 0.4 * 1.5;
-      const maxbasehitdmg = maxbasedmg * (weaponqualityMax + materialquality) * 0.4 * 1.5;
-
-     const modanatomy = (anatomy + 50) * 0.01;
-     const statmod = (str * strmod + dex * dexmod) / 60;
-     const hitdmgmultiplier = modanatomy + statmod;
-     const weaponfightbonus = weaponfight / 20;
-
-     const mindmg = Math.floor(minbasehitdmg * hitdmgmultiplier + weaponfightbonus);
-     const middmg = Math.floor(midbasehitdmg * hitdmgmultiplier + weaponfightbonus);
-     const maxdmg = Math.floor(maxbasehitdmg * hitdmgmultiplier + weaponfightbonus);
-
-     // Wyświetlenie wyników
-     document.getElementById('result').innerHTML = `
-        <p>Minimalny dmg: <strong>${mindmg}</strong></p>
-        <p>Średni dmg: <strong>${middmg}</strong></p>
-        <p>Maksymalny dmg: <strong>${maxdmg}</strong></p>
-        <p>Na końcowe obrażenia zadane przeciwnikowi wpływają dodatkowo jego AR oraz umiejętności aktywne i pasywne.</p>
-     `;
+        switch (weaponType) {
+            case "melee":
+                strmod = 0.7;
+                dexmod = 0.3;
+                break;
+            case "finesse":
+                strmod = 0.3;
+                dexmod = 0.7;
+                break;
+            case "ranged":
+                strmod = 0.2;
+                dexmod = 0.8;
+                break;
+            default:
+                strmod = 0;
+                dexmod = 0;
+        }
     }
 
-  </script>
+    // Funkcja calculate - obliczanie obrażeń
+    function calculate() {
+        // Pobierz wartości od użytkownika
+        const minbasewapondmg = parseFloat(document.getElementById('minbasewapondmg').value) || 0;
+        const maxbasewapondmg = parseFloat(document.getElementById('maxbasewapondmg').value) || 0;
+        const weaponquality = document.getElementById('weaponquality').value;
+        const materialquality = parseFloat(document.getElementById('materialquality').value) || 0;
+        const anatomy = parseFloat(document.getElementById('anatomy').value) || 0;
+        const str = parseFloat(document.getElementById('str').value) || 0;
+        const dex = parseFloat(document.getElementById('dex').value) || 0;
+        const weaponfight = parseFloat(document.getElementById('weaponfight').value) || 0;
+
+        // Przypisz wartości minimalne i maksymalne dla jakości broni
+        let weaponqualityMin = 0;
+        let weaponqualityMax = 0;
+
+        switch (weaponquality) {
+            case "Low":
+                weaponqualityMin = 0.5;
+                weaponqualityMax = 0.99;
+                break;
+            case "Average":
+                weaponqualityMin = 1;
+                weaponqualityMax = 1.14;
+                break;
+            case "Good":
+                weaponqualityMin = 1.15;
+                weaponqualityMax = 1.22;
+                break;
+            case "Superior":
+                weaponqualityMin = 1.23;
+                weaponqualityMax = 1.29;
+                break;
+            case "Exp":
+                weaponqualityMin = 1.3;
+                weaponqualityMax = 1.4;
+                break;
+            default:
+                weaponqualityMin = 0;
+                weaponqualityMax = 0;
+        }
+
+        // Obliczenia
+        const minbasedmg = minbasewapondmg;
+        const midbasedmg = (minbasewapondmg + maxbasewapondmg) / 2;
+        const maxbasedmg = maxbasewapondmg;
+
+        const minbasehitdmg = minbasedmg * (weaponqualityMin + materialquality) * 0.4 * 1.5;
+        const midbasehitdmg = midbasedmg * ((weaponqualityMin + weaponqualityMax) / 2 + materialquality) * 0.4 * 1.5;
+        const maxbasehitdmg = maxbasedmg * (weaponqualityMax + materialquality) * 0.4 * 1.5;
+
+        const modanatomy = (anatomy + 50) * 0.01;
+        const statmod = (str * strmod + dex * dexmod) / 60;
+        const hitdmgmultiplier = modanatomy + statmod;
+        const weaponfightbonus = weaponfight / 20;
+
+        const mindmg = Math.floor(minbasehitdmg * hitdmgmultiplier + weaponfightbonus);
+        const middmg = Math.floor(midbasehitdmg * hitdmgmultiplier + weaponfightbonus);
+        const maxdmg = Math.floor(maxbasehitdmg * hitdmgmultiplier + weaponfightbonus);
+
+        // Wyświetlenie wyników
+        document.getElementById('result').innerHTML = `
+            <p>Minimalny dmg: <strong>${mindmg}</strong></p>
+            <p>Średni dmg: <strong>${middmg}</strong></p>
+            <p>Maksymalny dmg: <strong>${maxdmg}</strong></p>
+            <p>Na końcowe obrażenia zadane przeciwnikowi wpływają dodatkowo jego AR oraz umiejętności aktywne i pasywne.</p>
+        `;
+    }
+</script>
 </body>
 </html>
