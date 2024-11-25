@@ -26,7 +26,7 @@
       border: 5px solid #c69c6d;
       border-radius: 15px;
       padding: 20px;
-      max-width: 800px;
+      max-width: 1150px;
       margin: 20px auto;
       box-shadow: 0 0 15px #000, 0 0 25px #6b4226;
     }
@@ -106,6 +106,16 @@
     footer a:hover {
       text-decoration: underline;
     }
+    .material-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px; /* Opcjonalne, dla odstępu między elementami */
+      width: 96%; /* Dopasowanie szerokości */
+      margin: 0 auto; /* Wyśrodkowanie kontenera */
+    }
+    .material-container > div {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
@@ -130,32 +140,21 @@
       <option value="Exp">Wyjątkowa</option>
 </select>
   </div>
-  <div>
-    <label for="materialquality">Rodzaj materiału:</label>
-    <select id="materialquality">
-      <option value="" disabled selected>Wybierz rodzaj materiału</option>
-      <option value="0">Ogamur</option>
-      <option value="0.1">Ang</option>
-      <option value="0.15">Celeb</option>
-      <option value="0.2">Evyth</option>
-      <option value="0.3">Tsarang</option>
-      <option value="0.5">Borang</option>
-      <option value="0.55">Dulgagar</option>
-      <option value="0.6">Erythmal</option>
-      <option value="0.65">Mal</option>
-      <option value="0.7">Galvorn</option>
-      <option value="0.75">Latuken</option>
-      <option value="0.85">Ilsa</option>
-      <option value="0.8">Laure</option>
-      <option value="0.9">Kanu</option>
-      <option value="0.71">Tinco</option>
-      <option value="0.76">Tingath</option>
-      <option value="0.87">Galvare</option>
-      <option value="0.95">Culo</option>
-      <option value="1.05">Urus</option>
-      <option value="1.2">Tambe</option>
-      <option value="0.7">Adarcer</option>
-    </select>
+  <div class="material-container">
+    <div>
+      <label for="materialType">Typ materiału:</label>
+      <select id="materialType" onchange="updateMaterialQuality()">
+        <option value="" disabled selected>Wybierz typ materiału</option>
+        <option value="metale">Metale</option>
+        <option value="drewno">Drewno</option>
+      </select>
+    </div>
+    <div>
+      <label for="materialquality">Rodzaj materiału:</label>
+      <select id="materialquality" disabled>
+        <option value="" disabled selected>Najpierw wybierz typ materiału</option>
+      </select>
+    </div>
   </div>
   <div>
     <label for="anatomy">Anatomia:</label>
@@ -190,10 +189,6 @@
     <br> Inspiracja <a href="https://wiki.endore.pl" target="_blank">Endore Middle-Earth</a>.
   </footer>
   <script>
-    // Funkcja updateModifiers - dynamicznie aktualizuje modyfikatory na podstawie wyboru broni
-    let strmod = 0; // Deklaracja globalna modyfikatora siły
-    let dexmod = 0; // Deklaracja globalna modyfikatora zręczności
-
     function updateModifiers() {
         const weaponType = document.getElementById('weaponType').value;
 
@@ -215,10 +210,61 @@
                 dexmod = 0;
         }
     }
-    
-    // Funkcja calculate - obliczanie obrażeń
+
+    function updateMaterialQuality() {
+        const materialType = document.getElementById('materialType').value;
+        const materialQuality = document.getElementById('materialquality');
+
+        // Resetuj listę i odblokuj
+        materialQuality.innerHTML = '<option value="" disabled selected>Wybierz rodzaj materiału</option>';
+        materialQuality.disabled = false;
+
+        // Dodaj odpowiednie opcje w zależności od wyboru
+        if (materialType === 'metale') {
+            materialQuality.innerHTML += `
+                <option value="0">Ogamur</option>
+                <option value="0.1">Ang</option>
+                <option value="0.15">Celeb</option>
+                <option value="0.2">Evyth</option>
+                <option value="0.3">Tsarang</option>
+                <option value="0.5">Borang</option>
+                <option value="0.55">Dulgagar</option>
+                <option value="0.6">Erythmal</option>
+                <option value="0.65">Mal</option>
+                <option value="0.7">Galvorn</option>
+                <option value="0.75">Latuken</option>
+                <option value="0.85">Ilsa</option>
+                <option value="0.8">Laure</option>
+                <option value="0.9">Kanu</option>
+                <option value="0.71">Tinco</option>
+                <option value="0.76">Tingath</option>
+                <option value="0.87">Galvare</option>
+                <option value="0.95">Culo</option>
+                <option value="1.05">Urus</option>
+                <option value="1.2">Tambe</option>
+                <option value="0.7">Adarcer</option>
+            `;
+        } else if (materialType === 'drewno') {
+            materialQuality.innerHTML += `
+                <option value="0">Galadh</option>
+                <option value="0.1">Orn</option>
+                <option value="0.2">Lassemista</option>
+                <option value="0.3">Orofarne</option>
+                <option value="0.4">Carnimirie</option>
+                <option value="0.5">Tasar</option>
+                <option value="0.6">Firmbrethil</option>
+                <option value="0.7">Thon</option>
+                <option value="0.81">Nimbrethil</option>
+                <option value="0.92">Lebethron</option>
+                <option value="1">Brethil</option>
+                <option value="0.84">Taniquelasse</option>
+                <option value="1.05">Oiolaire</option>
+                <option value="1.15">Baradanar</option>
+            `;
+        }
+    }
+
     function calculate() {
-        // Pobierz wartości od użytkownika
         const minbasewapondmg = parseFloat(document.getElementById('minbasewapondmg').value) || 0;
         const maxbasewapondmg = parseFloat(document.getElementById('maxbasewapondmg').value) || 0;
         const weaponquality = document.getElementById('weaponquality').value;
@@ -228,7 +274,6 @@
         const dex = parseFloat(document.getElementById('dex').value) || 0;
         const weaponfight = parseFloat(document.getElementById('weaponfight').value) || 0;
 
-        // Przypisz wartości minimalne i maksymalne dla jakości broni
         let weaponqualityMin = 0;
         let weaponqualityMax = 0;
 
@@ -258,7 +303,6 @@
                 weaponqualityMax = 0;
         }
 
-        // Obliczenia
         const minbasedmg = minbasewapondmg;
         const midbasedmg = (minbasewapondmg + maxbasewapondmg) / 2;
         const maxbasedmg = maxbasewapondmg;
@@ -276,7 +320,6 @@
         const middmg = Math.floor(midbasehitdmg * hitdmgmultiplier + weaponfightbonus);
         const maxdmg = Math.floor(maxbasehitdmg * hitdmgmultiplier + weaponfightbonus);
 
-        // Wyświetlenie wyników
         document.getElementById('result').innerHTML = `
             <p>Minimalny dmg: <strong>${mindmg}</strong></p>
             <p>Średni dmg: <strong>${middmg}</strong></p>
@@ -284,6 +327,6 @@
             <p>Na końcowe obrażenia zadane przeciwnikowi wpływają dodatkowo jego AR oraz umiejętności aktywne i pasywne.</p>
         `;
     }
-</script>
+  </script>
 </body>
 </html>
